@@ -26,6 +26,11 @@ module Locomotive
 
       def update
         @content_entry.from_presenter(params[:content_entry] || params[:entry])
+        (params[:content_entry] || params[:entry]).each do |key, value|
+          if value.is_a?(Array) && value.delete('') && value.empty?
+            @content_entry[(key + '_ids').to_s] = []
+          end
+        end
         @content_entry.save
         respond_with @content_entry, location: main_app.locomotive_api_content_entries_url(@content_type.slug)
       end
